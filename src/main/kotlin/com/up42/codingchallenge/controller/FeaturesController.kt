@@ -1,33 +1,31 @@
 package com.up42.codingchallenge.controller
 
 import com.up42.codingchallenge.model.FeatureCollection
+import com.up42.codingchallenge.service.FeatureService
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import org.springframework.core.io.ClassPathResource
-import org.springframework.http.HttpStatus
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class FeaturesController {
+
+    @Autowired
+    private lateinit var featureService: FeatureService
+
     @GetMapping("/features")
-    fun getFeatures(): List<FeatureCollection.Feature> =
-        ClassPathResource("/static/source-data.json").file.readText()
-            .let { jsonString ->
-                jacksonObjectMapper().readValue<List<FeatureCollection>>(jsonString)
-            }.flatMap {
-                it.features
-            }.map {
-                it.apply {
-                    id = properties?.id
-                    timestamp = properties?.timestamp
-                    beginViewingDate = properties?.acquisition?.beginViewingDate
-                    endViewingDate = properties?.acquisition?.endViewingDate
-                    missionName = properties?.acquisition?.missionName
-                }
-            }.ifEmpty {
-                throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "No features found")
-            }
+    fun getFeatures(): ResponseEntity<List<FeatureCollection.Feature>> {
+        return try {
+            val features = featureService.getFeatures()
+            ResponseEntity.ok()
+                    .body(features)
+        } catch(e: ResponseStatusException) {
+            ResponseEntity
+                    .notFound()
+                    .build()
+        }
+    }
+        
 }

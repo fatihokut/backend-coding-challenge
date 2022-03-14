@@ -1,6 +1,7 @@
 package com.up42.codingchallenge.service
 
 import com.up42.codingchallenge.model.FeatureCollection
+import com.up42.codingchallenge.model.ImageCollection
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -38,7 +39,7 @@ class FeatureService {
     fun getImageBytes(id: UUID): ByteArray? =
         ClassPathResource("/static/source-data.json").file.readText()
             .let { jsonString ->
-                jacksonObjectMapper().readValue<List<FeatureCollection>>(jsonString) 
+                jacksonObjectMapper().readValue<List<ImageCollection>>(jsonString) 
             }.flatMap {
                 it.features
             }.find {

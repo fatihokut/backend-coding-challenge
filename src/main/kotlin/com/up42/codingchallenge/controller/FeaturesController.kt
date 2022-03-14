@@ -25,13 +25,13 @@ class FeaturesController {
             val features = featureService.getFeatures()
 
             ResponseEntity.ok()
-                    .body(features)
+                .body(features)
 
-        } catch(e: ResponseStatusException) {
-            ResponseEntity
+            } catch(e: ResponseStatusException) {
+                ResponseEntity
                     .notFound()
                     .build()
-        }
+            }
     }
 
     @GetMapping("/features/{featureId}/quicklook")
@@ -41,8 +41,8 @@ class FeaturesController {
             val imageBytes = featureService.getImageBytes(featureId)
       
             ResponseEntity.ok()
-              .contentType(MediaType.parseMediaType(MediaType.IMAGE_PNG_VALUE))
-              .body(imageBytes)
+                .contentType(MediaType.parseMediaType(MediaType.IMAGE_PNG_VALUE))
+                .body(imageBytes)
       
             } catch(e: NoSuchElementException) {
                 ResponseEntity
